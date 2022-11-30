@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './index.less';
+import  {useDispatch}from "react-redux"
 import MyScrollBox from '@src/common/components/MyScrollBox';
 import {RESUME_TOOLBAR_LIST} from '@common/constants/resume';
 import {onAddToolbar,onDeleteToolbar} from "./utils"
@@ -7,7 +8,26 @@ function ResumeToolbar() {
   const height =document.body.clientHeight;
   const [addToolbarList,setAddToolbarList] = useState<TSResume.SliderItem[]>([])
   const [unAddToolbarList, setUnAddToolbarList] = useState<TSResume.SliderItem[]>([]);
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    if(RESUME_TOOLBAR_LIST.length>0) {
+      changeResumeToolbarKeys(addToolbarList.map((s) => s.key))
+    }
+  },[])
+
+  const changeResumeToolbarKeys = (moduleKeys:string[])=>{
+    if(moduleKeys.length > 0) {
+      dispatch({
+        type:"templateModel/setStore",
+        payload: {
+          key:"resumeToolbarKeys",
+          values:moduleKeys
+        }
+      })
+    }
+  }
   // 添加点击实践
+
 
   const onAddSliderAction =(moduleToolebar:TSResume.SliderItem)=>{
     const addKeyList = addToolbarList.map((s:TSResume.SliderItem)=>s.key)
@@ -19,7 +39,7 @@ function ResumeToolbar() {
     const nextUnAddToolbarList = onDeleteToolbar(unAddToolbarList, moduleToolebar)
     
     setUnAddToolbarList(nextAddToolbarList)
- 
+    changeResumeToolbarKeys(nextAddToolbarList.map(s=>s.key))
   }
 
   // 删除模块
@@ -28,6 +48,7 @@ const onDeleteSliderAction = (moduleSlider: TSResume.SliderItem) => {
   setAddToolbarList(nextAddSliderList);
   const nextUnAddSliderList = onAddToolbar(unAddToolbarList, moduleSlider);
   setUnAddToolbarList(nextUnAddSliderList);
+  changeResumeToolbarKeys(nextAddSliderList.map(s=>s.key))
 };
  
   useEffect(()=>{
