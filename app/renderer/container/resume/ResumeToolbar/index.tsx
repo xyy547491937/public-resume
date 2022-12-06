@@ -4,6 +4,7 @@ import  {useDispatch}from "react-redux"
 import MyScrollBox from '@src/common/components/MyScrollBox';
 import {RESUME_TOOLBAR_LIST} from '@common/constants/resume';
 import {onAddToolbar,onDeleteToolbar} from "./utils"
+import messager, {MESSAGE_EVENT_NAME_MAPS} from '@src/common/messager';
 function ResumeToolbar() {
   const height =document.body.clientHeight;
   const [addToolbarList,setAddToolbarList] = useState<TSResume.SliderItem[]>([])
@@ -72,7 +73,11 @@ const onDeleteSliderAction = (moduleSlider: TSResume.SliderItem) => {
           <div styleName='content'>
             {
               addToolbarList.map((toolbar:TSResume.SliderItem)=>{
-                return (<div styleName='box' key={toolbar.key}>
+                return (<div styleName='box' key={toolbar.key} onClick={()=>{
+                  messager.send(MESSAGE_EVENT_NAME_MAPS.OPEN_FORM_MODAL,{
+                    form_name:toolbar.key
+                  })
+                }}>
                      <p styleName='title'> {toolbar.name}</p>
                      <span>{toolbar.summary}</span>
                 </div>)
